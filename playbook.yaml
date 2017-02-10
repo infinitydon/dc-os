@@ -1,0 +1,37 @@
+---
+- name: General Install For All Nodes
+  hosts: all
+  become: yes
+  become_user: root
+  gather_facts: yes
+  tasks:
+  - name: Link Certificate Authorities
+    file: src=/etc/ssl/certs/ca-bundle.crt dest=/etc/ssl/certs/ca-certificates.crt state=link
+  - include: tasks/detect-public-ip.yml
+  - include: tasks/insecure-registry.yml
+
+- name: Generate DC/OS Node Installer
+  hosts: bootstrap
+  become: yes
+  become_user: root
+  gather_facts: no
+  tasks:
+  - include: tasks/bootstrap.yml
+
+- name: Install DC/OS
+  hosts: master,agent
+  strategy: free
+  become: yes
+  become_user: root
+  gather_facts: no
+  tasks:
+  - include: tasks/install.yml
+
+- name: Modify Mesos Memory
+  hosts: agent
+  strategy: free
+  become: yes
+  become_user: root
+  gather_facts: no
+  tasks:
+  - include: tasks/mesos-memory.yml
