@@ -7,8 +7,8 @@
   tasks:
   - name: Link Certificate Authorities
     file: src=/etc/ssl/certs/ca-bundle.crt dest=/etc/ssl/certs/ca-certificates.crt state=link
-  - include: tasks/detect-public-ip.yml
-  - include: tasks/insecure-registry.yml
+  - include: roles/common/tasks/detect-public-ip.yml
+  - include: roles/common/tasks/insecure-registry.yml
 
 - name: Generate DC/OS Node Installer
   hosts: bootstrap
@@ -16,7 +16,7 @@
   become_user: root
   gather_facts: no
   tasks:
-  - include: tasks/bootstrap.yml
+  - include: roles/common/tasks/bootstrap.yml
 
 - name: Install DC/OS
   hosts: master,agent
@@ -25,7 +25,7 @@
   become_user: root
   gather_facts: no
   tasks:
-  - include: tasks/install.yml
+  - include: roles/common/tasks/install.yml
 
 - name: Modify Mesos Memory
   hosts: agent
@@ -34,4 +34,4 @@
   become_user: root
   gather_facts: no
   tasks:
-  - include: tasks/mesos-memory.yml
+  - include: roles/common/tasks/mesos-memory.yml
